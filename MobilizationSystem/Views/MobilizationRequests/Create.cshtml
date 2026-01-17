@@ -1,0 +1,32 @@
+@model CreateMobilizationRequestViewModel
+@{
+    ViewData["Title"] = "Create Mobilization Request";
+}
+
+<h2>Create Mobilization Request</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Purpose" class="form-label">Purpose</label>
+        <textarea asp-for="Purpose" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Purpose" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Select Persons</label>
+        <select asp-for="SelectedPersonIds" asp-items="Model.Persons" class="form-select" multiple size="6"></select>
+        <div class="form-text">Hold Ctrl (or Cmd) to select multiple.</div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Select Resources</label>
+        <select asp-for="SelectedResourceIds" asp-items="Model.Resources" class="form-select" multiple size="6"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Request</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
