@@ -1,0 +1,51 @@
+@using MobilizationSystem.Domain
+@{
+    ViewData["Title"] = "Mobilization Requests";
+}
+
+<h2>Mobilization Requests</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-2">Create Mobilization Request</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Purpose</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Purpose</td>
+                <td>@item.Status</td>
+                @if (item.Status == RequestStatus.Submitted /*&& User.IsInRole("Officer")*/)
+                {
+                    <td>
+                        <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-sm btn-success">Approve</a>
+                    </td>
+                }
+                else if (item.Status == RequestStatus.Approved /*&& User.IsInRole("Admin")*/)
+                {
+                    <td>
+                        <a asp-action="Approve" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Final Approve</a>
+                    </td>
+                }
+                else if (item.Status == RequestStatus.Activated /*&& User.IsInRole("Admin")*/)
+                {
+                    <td>
+                        <a asp-action="Complete" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Complete</a>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MobilizationSystem.Infrastructure;
+using MobilizationSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,12 @@ builder.Services.AddDbContext<MobilizationDbContext>(options =>
 // {
 //     options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
 // });
+
+builder.Services.AddDbContext<MobilizationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sql => sql.EnableRetryOnFailure()));
+
+builder.Services.AddScoped<IMobilizationService, MobilizationService>();
 
 var app = builder.Build();
 

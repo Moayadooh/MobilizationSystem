@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using MobilizationSystem.Domain;
 using MobilizationSystem.Infrastructure;
 using MobilizationSystem.Models;
+using MobilizationSystem.Services;
 
 namespace MobilizationSystem.Controllers
 {
@@ -14,11 +15,13 @@ namespace MobilizationSystem.Controllers
     {
         private readonly MobilizationDbContext _context;
         //private readonly UserManager<IdentityUser> _userManager;
+        private readonly IMobilizationService _mobilizationService;
 
-        public MobilizationRequestsController(MobilizationDbContext context/*, UserManager<IdentityUser> userManager*/)
+        public MobilizationRequestsController(MobilizationDbContext context/*, UserManager<IdentityUser> userManager*/, IMobilizationService mobilizationService)
         {
             _context = context;
             //_userManager = userManager;
+            _mobilizationService = mobilizationService;
         }
 
         private async Task PopulateLookupLists(CreateMobilizationRequestViewModel vm)
@@ -101,10 +104,32 @@ namespace MobilizationSystem.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Dashboard");
-            //return RedirectToAction(nameof(Index));
+            //return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction(nameof(Index));
         }
 
-        // Index, Details, Approve etc...
+        public IActionResult Index()
+            => View(_context.MobilizationRequests.ToList());
+
+        //[Authorize(Roles = "Officer,Admin")]
+        public async Task<IActionResult> Approve(int id)
+        {
+            //bool isFinalApproval = User.IsInRole("Admin");
+
+            await _mobilizationService.ApproveAsync(
+                id,
+                "unknown", //User.Identity!.Name!,
+                true //isFinalApproval
+            );
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Complete(int id)
+        {
+            await _mobilizationService.CompleteAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

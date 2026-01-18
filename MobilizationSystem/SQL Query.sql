@@ -31,3 +31,6 @@ CREATE TABLE MobilizationRequestResources (
     CONSTRAINT FK_MRR_MR FOREIGN KEY (MobilizationRequestId) REFERENCES MobilizationRequests(Id),
     CONSTRAINT FK_MRR_R FOREIGN KEY (ResourceId) REFERENCES Resources(Id)
 );
+
+CREATE INDEX IX_Persons_IsAvailable ON Persons(IsAvailable);
+CREATE INDEX IX_Resources_IsAvailable ON Resources(IsAvailable);
