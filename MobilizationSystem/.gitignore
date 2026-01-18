@@ -95,3 +95,6 @@ global.json.user
 
 # Ignore dump files
 *.dmp
+
+# Ignore db files
+*.db*

@@ -8,8 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Configure EF Core with SQLite
 builder.Services.AddDbContext<MobilizationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=app.db"));
+
+// builder.Services.AddDbContext<MobilizationDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// builder.Services.AddDbContext<MobilizationDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+//         sql => sql.EnableRetryOnFailure()));
 
 // builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 //     .AddEntityFrameworkStores<MobilizationDbContext>();
@@ -18,10 +26,6 @@ builder.Services.AddDbContext<MobilizationDbContext>(options =>
 // {
 //     options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
 // });
-
-builder.Services.AddDbContext<MobilizationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-        sql => sql.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IMobilizationService, MobilizationService>();
 builder.Services.AddScoped<IMobilizationValidationService, MobilizationValidationService>();
