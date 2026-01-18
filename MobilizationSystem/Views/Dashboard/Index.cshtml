@@ -1,11 +1,91 @@
-@{
-    ViewData["Title"] = "Dashboard";
-}
+@model DashboardViewModel
 
-<h2>Dashboard</h2>
+<h2 class="mb-4">Mobilization Dashboard</h2>
 
-<div class="row">
-  <div class="col-md-3 card p-3">Total Requests: @ViewBag.TotalRequests</div>
-  <div class="col-md-3 card p-3">Active: @ViewBag.Active</div>
-  <div class="col-md-3 card p-3">Available Personnel: @ViewBag.AvailablePersons</div>
+<div class="row g-3">
+
+    <!-- Requests -->
+    <div class="col-md-3">
+        <div class="card text-bg-primary p-3">
+            <h5>Total Requests</h5>
+            <h2>@Model.TotalRequests</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-warning p-3">
+            <h5>Pending</h5>
+            <h2>@Model.PendingRequests</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-success p-3">
+            <h5>Active</h5>
+            <h2>@Model.ActiveRequests</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-secondary p-3">
+            <h5>Completed</h5>
+            <h2>@Model.CompletedRequests</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-bg-danger p-3">
+            <h5>Cancelled</h5>
+            <h2>@Model.CancelledRequests</h2>
+        </div>
+    </div>
+
+</div>
+
+<hr class="my-4" />
+
+<h4>Personnel Status</h4>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <strong>Total</strong>
+            <h3>@Model.TotalPersons</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-success">
+            <strong>Available</strong>
+            <h3>@Model.AvailablePersons</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-danger">
+            <strong>Assigned</strong>
+            <h3>@Model.AssignedPersons</h3>
+        </div>
+    </div>
+</div>
+
+<hr class="my-4" />
+
+<h4>Resources Status</h4>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card p-3">
+            <strong>Total</strong>
+            <h3>@Model.TotalResources</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-success">
+            <strong>Available</strong>
+            <h3>@Model.AvailableResources</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-danger">
+            <strong>Assigned</strong>
+            <h3>@Model.AssignedResources</h3>
+        </div>
+    </div>
 </div>
