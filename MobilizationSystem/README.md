@@ -12,9 +12,3 @@ dotnet ef database update
 Visual Studio:
 Add-Migration InitialCreate
 Update-Database
-
-
-
-USE master;
-ALTER DATABASE MobilizationDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-DROP DATABASE MobilizationDB;
