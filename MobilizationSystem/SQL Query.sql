@@ -34,3 +34,7 @@ CREATE TABLE MobilizationRequestResources (
 
 CREATE INDEX IX_Persons_IsAvailable ON Persons(IsAvailable);
 CREATE INDEX IX_Resources_IsAvailable ON Resources(IsAvailable);
+
+CREATE INDEX IX_MR_Status ON MobilizationRequests(Status);
+CREATE INDEX IX_MRP_PersonId ON MobilizationRequestPersons(PersonId);
+CREATE INDEX IX_MRR_ResourceId ON MobilizationRequestResources(ResourceId);

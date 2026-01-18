@@ -24,6 +24,7 @@ builder.Services.AddDbContext<MobilizationDbContext>(options =>
         sql => sql.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IMobilizationService, MobilizationService>();
+builder.Services.AddScoped<IMobilizationValidationService, MobilizationValidationService>();
 
 var app = builder.Build();
 

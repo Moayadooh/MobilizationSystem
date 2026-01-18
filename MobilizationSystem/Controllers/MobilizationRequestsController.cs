@@ -16,27 +16,68 @@ namespace MobilizationSystem.Controllers
         private readonly MobilizationDbContext _context;
         //private readonly UserManager<IdentityUser> _userManager;
         private readonly IMobilizationService _mobilizationService;
+        private readonly IMobilizationValidationService _validationService;
+        private static readonly RequestStatus[] BlockingStatuses =
+        {
+            RequestStatus.Submitted,
+            RequestStatus.Approved,
+            RequestStatus.Activated
+        };
 
-        public MobilizationRequestsController(MobilizationDbContext context/*, UserManager<IdentityUser> userManager*/, IMobilizationService mobilizationService)
+        public MobilizationRequestsController(MobilizationDbContext context/*, UserManager<IdentityUser> userManager*/, IMobilizationService mobilizationService, IMobilizationValidationService validationService)
         {
             _context = context;
             //_userManager = userManager;
             _mobilizationService = mobilizationService;
+            _validationService = validationService;
+
         }
 
         private async Task PopulateLookupLists(CreateMobilizationRequestViewModel vm)
         {
+            var busyPersonIds = await _context.MobilizationRequestPersons
+                .Where(mrp => BlockingStatuses.Contains(mrp.MobilizationRequest!.Status))
+                .Select(mrp => mrp.PersonId)
+                .Distinct()
+                .ToListAsync();
+
             vm.Persons = await _context.Persons
-                .Where(p => p.IsAvailable)
+                .Where(p => p.IsAvailable && !busyPersonIds.Contains(p.Id))
                 .OrderBy(p => p.FullName)
-                .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.FullName })
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.FullName
+                })
+                .ToListAsync();
+                
+            // vm.Persons = await _context.Persons
+            //     .Where(p => p.IsAvailable)
+            //     .OrderBy(p => p.FullName)
+            //     .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.FullName })
+            //     .ToListAsync();
+
+            var busyResourceIds = await _context.MobilizationRequestResources
+                .Where(mrr => BlockingStatuses.Contains(mrr.MobilizationRequest!.Status))
+                .Select(mrr => mrr.ResourceId)
+                .Distinct()
                 .ToListAsync();
 
             vm.Resources = await _context.Resources
-                .Where(r => r.IsAvailable)
+                .Where(r => r.IsAvailable && !busyResourceIds.Contains(r.Id))
                 .OrderBy(r => r.Name)
-                .Select(r => new SelectListItem { Value = r.Id.ToString(), Text = r.Name })
+                .Select(r => new SelectListItem
+                {
+                    Value = r.Id.ToString(),
+                    Text = r.Name
+                })
                 .ToListAsync();
+            
+            // vm.Resources = await _context.Resources
+            //     .Where(r => r.IsAvailable)
+            //     .OrderBy(r => r.Name)
+            //     .Select(r => new SelectListItem { Value = r.Id.ToString(), Text = r.Name })
+            //     .ToListAsync();
         }
 
         [HttpGet]
@@ -53,6 +94,19 @@ namespace MobilizationSystem.Controllers
         {
             if (!ModelState.IsValid)
             {
+                await PopulateLookupLists(vm);
+                return View(vm);
+            }
+
+            try
+            {
+                await _validationService.ValidateAvailabilityAsync(
+                    vm.SelectedPersonIds,
+                    vm.SelectedResourceIds);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
                 await PopulateLookupLists(vm);
                 return View(vm);
             }
@@ -104,7 +158,6 @@ namespace MobilizationSystem.Controllers
 
             await _context.SaveChangesAsync();
 
-            //return RedirectToAction("Index", "Dashboard");
             return RedirectToAction(nameof(Index));
         }
 
