@@ -103,3 +103,7 @@ INSERT INTO Resources (Name, Type) VALUES
 ('Excavator', 'Heavy'),
 ('Crane', 'Heavy'),
 ('Pickup Truck', 'Vehicle');
+
+USE master;
+ALTER DATABASE MobilizationDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE MobilizationDB;
