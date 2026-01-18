@@ -1,0 +1,43 @@
+@using MobilizationSystem.Domain
+@model MobilizationRequest
+
+<h2>Mobilization Request #@Model.Id</h2>
+
+<p><strong>Purpose:</strong> @Model.Purpose</p>
+<p><strong>Status:</strong> @Model.Status</p>
+<p><strong>Created:</strong> @Model.RequestDate</p>
+
+<hr />
+
+<h4>Assigned Persons</h4>
+<ul>
+@foreach (var p in Model.MobilizationRequestPersons)
+{
+    <li>@p.Person?.FullName</li>
+}
+</ul>
+
+<h4>Assigned Resources</h4>
+<ul>
+@foreach (var r in Model.MobilizationRequestResources)
+{
+    <li>@r.Resource?.Name (@r.Resource?.Type)</li>
+}
+</ul>
+
+<hr />
+
+<h4>Approval Timeline</h4>
+
+<ul class="list-group">
+@foreach (var a in Model.Approvals.OrderBy(x => x.ApprovalDate))
+{
+    <li class="list-group-item">
+        <strong>@a.ApprovedBy</strong>
+        approved on
+        <span>@a.ApprovalDate.ToLocalTime()</span>
+    </li>
+}
+</ul>
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Back</a>

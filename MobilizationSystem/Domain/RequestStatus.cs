@@ -7,6 +7,7 @@
         Approved = 2,
         Rejected = 3,
         Activated = 4,
-        Completed = 5
+        Completed = 5,
+        Cancelled = 6
     }
 }

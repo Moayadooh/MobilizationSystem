@@ -96,5 +96,50 @@ namespace MobilizationSystem.Services
                     resource.IsAvailable = true;
             }
         }
+
+        public async Task CancelAsync(int requestId, string cancelledBy)
+        {
+            var request = await _context.MobilizationRequests
+                .Include(r => r.MobilizationRequestPersons)
+                .Include(r => r.MobilizationRequestResources)
+                .FirstOrDefaultAsync(r => r.Id == requestId);
+
+            if (request == null)
+                throw new Exception("Request not found");
+
+            if (request.Status == RequestStatus.Completed ||
+                request.Status == RequestStatus.Rejected)
+                throw new InvalidOperationException("This request cannot be cancelled");
+
+            request.Status = RequestStatus.Cancelled;
+
+            // 🔓 RELEASE persons
+            foreach (var p in request.MobilizationRequestPersons)
+            {
+                var person = await _context.Persons.FindAsync(p.PersonId);
+                if (person != null)
+                    person.IsAvailable = true;
+            }
+
+            // 🔓 RELEASE resources
+            foreach (var r in request.MobilizationRequestResources)
+            {
+                var resource = await _context.Resources.FindAsync(r.ResourceId);
+                if (resource != null)
+                    resource.IsAvailable = true;
+            }
+
+            // 📝 Audit
+            _context.AuditLogs.Add(new AuditLog
+            {
+                UserName = cancelledBy,
+                Action = "Cancel Mobilization Request",
+                TableName = nameof(MobilizationRequest),
+                RecordId = request.Id,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

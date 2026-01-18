@@ -25,6 +25,8 @@ builder.Services.AddDbContext<MobilizationDbContext>(options =>
 
 builder.Services.AddScoped<IMobilizationService, MobilizationService>();
 builder.Services.AddScoped<IMobilizationValidationService, MobilizationValidationService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuditService, AuditService>();
 
 var app = builder.Build();
 

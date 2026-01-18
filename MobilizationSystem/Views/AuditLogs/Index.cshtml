@@ -1,0 +1,28 @@
+@using MobilizationSystem.Domain
+@model IEnumerable<AuditLog>
+
+<h2>Audit Logs</h2>
+
+<table class="table table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Table</th>
+            <th>Record ID</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var log in Model)
+{
+        <tr>
+            <td>@log.CreatedAt.ToLocalTime()</td>
+            <td>@log.UserName</td>
+            <td>@log.Action</td>
+            <td>@log.TableName</td>
+            <td>@log.RecordId</td>
+        </tr>
+}
+    </tbody>
+</table>

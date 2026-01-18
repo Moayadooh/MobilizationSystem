@@ -184,5 +184,40 @@ namespace MobilizationSystem.Controllers
             await _mobilizationService.CompleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        //[Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            var request = await _context.MobilizationRequests
+                .Include(r => r.Approvals)
+                .Include(r => r.MobilizationRequestPersons)
+                    .ThenInclude(p => p.Person)
+                .Include(r => r.MobilizationRequestResources)
+                    .ThenInclude(r => r.Resource)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (request == null)
+                return NotFound();
+
+            return View(request);
+        }
+
+        //[Authorize(Roles = "Officer,Admin")]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            try
+            {
+                await _mobilizationService.CancelAsync(
+                    id,
+                    "unknown" //User.Identity!.Name!
+                );
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
