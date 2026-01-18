@@ -1,0 +1,30 @@
+@using MobilizationSystem.Domain
+@model IEnumerable<Person>
+
+<h2>Persons</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-2">Add Person</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>National ID</th>
+            <th>Available</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var p in Model)
+{
+        <tr>
+            <td>@p.FullName</td>
+            <td>@p.NationalId</td>
+            <td>@p.IsAvailable</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-warning">Edit</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
